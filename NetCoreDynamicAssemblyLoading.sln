@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceHost", "ServiceHost\ServiceHost.csproj", "{7EB5B83F-70DB-4FB8-A68F-42FD605DA955}"
 EndProject
@@ -11,7 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Version2", "Version2\Versio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssemblyLoader", "AssemblyLoader\AssemblyLoader.csproj", "{412B856F-6835-4141-8579-D23E64875DA1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Version3", "Version3\Version3.csproj", "{6E4892B2-8879-4705-8298-0248AF6ED8EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Version3", "Version3\Version3.csproj", "{6E4892B2-8879-4705-8298-0248AF6ED8EC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{92F986E3-BC47-4069-A83A-45951FF1B287}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
