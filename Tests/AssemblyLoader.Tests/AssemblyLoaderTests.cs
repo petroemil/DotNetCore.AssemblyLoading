@@ -19,8 +19,11 @@ namespace AssemblyLoader.Tests
         private readonly (string, string) ix310AssemblyVersion = ("System.Interactive, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263", "3.1.0.0");
         private readonly (string, string) ix311AssemblyVersion = ("System.Interactive, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263", "3.1.1.0");
 
+        private readonly Assembly[] assembliesAtStartup;
         public AssemblyLoaderTests()
         {
+            AssemblyLoader.MakeSnapshotOfLoadedAssemblies();
+
             // The AppContext.BaseDirectory will return the Test project's output directory
             // Something like <SolutionPath>\Tests\AssemblyLoader.Tests\bin\Debug\netcoreapp2.0
             var testsOutputDirectory = AppContext.BaseDirectory;
@@ -191,15 +194,7 @@ namespace AssemblyLoader.Tests
             Assert.Equal(ix311AssemblyVersion, assembly1IxVersion);
 
             Assert.Equal(rx300AssemblyVersion, assembly2RxVersion);
-
-            // Logically we would expect to see Ix 3.1.0, but because we loaded Assembly-1 already with its dependency to Ix 3.1.1,
-            // it's now part of the app context and will be shared with Assembly-2
-            //
-            // Basically even if we don't want to share dependencies between assemblies,
-            // if we share dependencies with the host, we will share dependencies of the assemblies as well...
-            // Even worse, it won't be a controlled dependency share, like in the case of using multiple UseFile() for the same AssemblyLoader,
-            // we will share the dependency which was loaded first
-            Assert.Equal(ix311AssemblyVersion, assembly2IxVersion);
+            Assert.Equal(ix310AssemblyVersion, assembly2IxVersion);
         }
     }
 }

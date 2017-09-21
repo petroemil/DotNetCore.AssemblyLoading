@@ -15,6 +15,11 @@ namespace AssemblyLoader
 
         public bool ShareDependenciesWithHost { get; set; } = true;
 
+        public static void MakeSnapshotOfLoadedAssemblies()
+        {
+            DirectoryLoader.assembliesLoadedAtStartup = AppDomain.CurrentDomain.GetAssemblies();
+        }
+
         public void Use(FileInfo assemblyFile)
         {
             this.assembliesToLoad.Add(assemblyFile);
@@ -79,6 +84,8 @@ namespace AssemblyLoader
 
         private class DirectoryLoader : AssemblyLoadContext
         {
+            public static Assembly[] assembliesLoadedAtStartup;
+
             private readonly List<(string dllName, Version version, FileInfo fileInfo)> dependencyPool;
             private readonly List<Assembly> loadedDependencies;
             private readonly bool shareDependenciesWithHost;
@@ -95,7 +102,7 @@ namespace AssemblyLoader
                 if (this.shareDependenciesWithHost)
                 {
                     // Try to use an assembly that is already loaded (no strong version match is forced)
-                    var existingSameOrNewerVersionAssembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(a => a.GetName().Name == assemblyName.Name);
+                    var existingSameOrNewerVersionAssembly = assembliesLoadedAtStartup.SingleOrDefault(a => a.GetName().Name == assemblyName.Name);
                     if (existingSameOrNewerVersionAssembly != null) return existingSameOrNewerVersionAssembly;
                 }
 
