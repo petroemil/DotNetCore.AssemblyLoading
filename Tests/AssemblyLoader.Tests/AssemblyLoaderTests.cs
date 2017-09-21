@@ -9,17 +9,17 @@ namespace AssemblyLoader.Tests
 {
     public class AssemblyLoaderTests
     {
-        private readonly string assembly1Path;
-        private readonly string assembly2Path;
+        private static readonly FileInfo assembly1File;
+        private static readonly FileInfo assembly2File;
 
-        private readonly (string, string) rx300AssemblyVersion = ("System.Reactive.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263", "3.0.0.0");
-        private readonly (string, string) rx310AssemblyVersion = ("System.Reactive.Core, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263", "3.1.0.0");
-        private readonly (string, string) rx311AssemblyVersion = ("System.Reactive.Core, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263", "3.1.1.0");
+        private static readonly (string, string) rx300AssemblyVersion = ("System.Reactive.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263", "3.0.0.0");
+        private static readonly (string, string) rx310AssemblyVersion = ("System.Reactive.Core, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263", "3.1.0.0");
+        private static readonly (string, string) rx311AssemblyVersion = ("System.Reactive.Core, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263", "3.1.1.0");
 
-        private readonly (string, string) ix310AssemblyVersion = ("System.Interactive, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263", "3.1.0.0");
-        private readonly (string, string) ix311AssemblyVersion = ("System.Interactive, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263", "3.1.1.0");
+        private static readonly (string, string) ix310AssemblyVersion = ("System.Interactive, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263", "3.1.0.0");
+        private static readonly (string, string) ix311AssemblyVersion = ("System.Interactive, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263", "3.1.1.0");
 
-        public AssemblyLoaderTests()
+        static AssemblyLoaderTests()
         {
             // The AppContext.BaseDirectory will return the Test project's output directory
             // Something like <SolutionPath>\Tests\AssemblyLoader.Tests\bin\Debug\netcoreapp2.0
@@ -28,14 +28,14 @@ namespace AssemblyLoader.Tests
             // Step back 4 (1st -> Debug, 2nd -> bin, 3rd -> AssemblyLoader.Tests, 4th -> Tests
             var testBaseDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\"));
 
-            this.assembly1Path = ConstructAssemblyPath(testBaseDirectory, "Assembly-1");
-            this.assembly2Path = ConstructAssemblyPath(testBaseDirectory, "Assembly-2");
+            assembly1File = new FileInfo(ConstructAssemblyPath(testBaseDirectory, "Assembly-1"));
+            assembly2File = new FileInfo(ConstructAssemblyPath(testBaseDirectory, "Assembly-2"));
         }
 
-        private string ConstructAssemblyPath(string baseDirectory, string assemblyName, string configuration = "Debug", string targetPlatform = "netstandard2.0")
+        private static string ConstructAssemblyPath(string baseDirectory, string assemblyName, string configuration = "Debug", string targetPlatform = "netstandard2.0")
             => $@"{baseDirectory}\TestAssemblies\{assemblyName}\bin\{configuration}\{targetPlatform}\{assemblyName}.dll";
 
-        private IEnumerable<(string, string)> CheckAssemblyDependencyVersion(Assembly assembly)
+        private static IEnumerable<(string, string)> CheckAssemblyDependencyVersion(Assembly assembly)
         {
             dynamic instance = assembly
                 .GetTypes()
@@ -52,8 +52,8 @@ namespace AssemblyLoader.Tests
         {
             var assemblyLoader = new AssemblyLoader();
             var loadedAssemblies = assemblyLoader
-                .UseFile(new FileInfo(this.assembly1Path))
-                .UseFile(new FileInfo(this.assembly2Path))
+                .UseFile(assembly1File)
+                .UseFile(assembly2File)
                 .Load();
 
             var hostAssembly = Assembly.GetExecutingAssembly();
@@ -87,8 +87,8 @@ namespace AssemblyLoader.Tests
             var assemblyLoader = new AssemblyLoader();
             var loadedAssemblies = assemblyLoader
                 .DontShareDependenciesWithHost()
-                .UseFile(new FileInfo(this.assembly1Path))
-                .UseFile(new FileInfo(this.assembly2Path))
+                .UseFile(assembly1File)
+                .UseFile(assembly2File)
                 .Load();
 
             var hostAssembly = Assembly.GetExecutingAssembly();
@@ -122,14 +122,14 @@ namespace AssemblyLoader.Tests
             var assemblyLoader1 = new AssemblyLoader();
             var assembly1 = assemblyLoader1
                 .DontShareDependenciesWithHost()
-                .UseFile(new FileInfo(this.assembly1Path))
+                .UseFile(assembly1File)
                 .Load()
                 .Single();
 
             var assemblyLoader2 = new AssemblyLoader();
             var assembly2 = assemblyLoader2
                 .DontShareDependenciesWithHost()
-                .UseFile(new FileInfo(this.assembly2Path))
+                .UseFile(assembly2File)
                 .Load()
                 .Single();
 
@@ -161,13 +161,13 @@ namespace AssemblyLoader.Tests
         {
             var assemblyLoader1 = new AssemblyLoader();
             var assembly1 = assemblyLoader1
-                .UseFile(new FileInfo(this.assembly1Path))
+                .UseFile(assembly1File)
                 .Load()
                 .Single();
 
             var assemblyLoader2 = new AssemblyLoader();
             var assembly2 = assemblyLoader2
-                .UseFile(new FileInfo(this.assembly2Path))
+                .UseFile(assembly2File)
                 .Load()
                 .Single();
 
