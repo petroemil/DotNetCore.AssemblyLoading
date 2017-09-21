@@ -4,7 +4,7 @@ namespace AssemblyLoader.Tests
 {
     public class Main
     {
-        public (string, string) CheckAssemblyVersion()
+        public (string, string) CheckDependency1Version()
         {
             var assembly = typeof(System.Reactive.Observer).Assembly;
             var fileVersion = assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
@@ -12,5 +12,7 @@ namespace AssemblyLoader.Tests
 
             return (assemblyFullName, fileVersion);
         }
+
+        public (string, string) CheckDependency2Version() => (null, null);
     }
 }
