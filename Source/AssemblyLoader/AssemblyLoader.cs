@@ -8,19 +8,12 @@ using System.Runtime.Loader;
 
 namespace AssemblyLoader
 {
-    public static class AssemblyLoaderExtensions
-    {
-        public static AssemblyLoader UseFile(this AssemblyLoader assemblyLoader, FileInfo assemblyFile)
-        {
-            assemblyLoader.Use(assemblyFile);
-            return assemblyLoader;
-        }
-    }
-
     public class AssemblyLoader
     {
         private List<FileInfo> assembliesToLoad = new List<FileInfo>();
         private List<(string dllName, Version version, FileInfo fileInfo)> dependencyPool = new List<(string dllName, Version version, FileInfo fileInfo)>();
+
+        public bool ShareDependenciesWithHost { get; set; } = true;
 
         public void Use(FileInfo assemblyFile)
         {
@@ -75,7 +68,7 @@ namespace AssemblyLoader
                     .First())
                 .ToList();
 
-            var assemblyLoader = new DirectoryLoader(mergedPool);
+            var assemblyLoader = new DirectoryLoader(mergedPool, this.ShareDependenciesWithHost);
 
             var loadedAssemblies = this.assembliesToLoad
                 .Select(assemblyFile => assemblyLoader.LoadFromAssemblyPath(assemblyFile.FullName))
@@ -88,15 +81,24 @@ namespace AssemblyLoader
         {
             private readonly List<(string dllName, Version version, FileInfo fileInfo)> dependencyPool;
             private readonly List<Assembly> loadedDependencies;
+            private readonly bool shareDependenciesWithHost;
 
-            public DirectoryLoader(List<(string dllName, Version version, FileInfo fileInfo)> dependencyPool)
+            public DirectoryLoader(List<(string dllName, Version version, FileInfo fileInfo)> dependencyPool, bool shareDependenciesWithHost)
             {
                 this.dependencyPool = dependencyPool;
                 this.loadedDependencies = new List<Assembly>();
+                this.shareDependenciesWithHost = shareDependenciesWithHost;
             }
 
             protected override Assembly Load(AssemblyName assemblyName)
             {
+                if (this.shareDependenciesWithHost)
+                {
+                    // Try to use an assembly that is already loaded (no strong version match is forced)
+                    var existingSameOrNewerVersionAssembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(a => a.GetName().Name == assemblyName.Name);
+                    if (existingSameOrNewerVersionAssembly != null) return existingSameOrNewerVersionAssembly;
+                }
+
                 try
                 {
                     // Try to use the default assembly loader
