@@ -15,11 +15,6 @@ namespace AssemblyLoader
 
         public bool ShareDependenciesWithHost { get; set; } = true;
 
-        public static void MakeSnapshotOfLoadedAssemblies()
-        {
-            DirectoryLoader.assembliesLoadedAtStartup = AppDomain.CurrentDomain.GetAssemblies();
-        }
-
         public void Use(FileInfo assemblyFile)
         {
             this.assembliesToLoad.Add(assemblyFile);
@@ -95,6 +90,12 @@ namespace AssemblyLoader
                 this.dependencyPool = dependencyPool;
                 this.loadedDependencies = new List<Assembly>();
                 this.shareDependenciesWithHost = shareDependenciesWithHost;
+
+                // 'assembliesLoadedAtStartup' is a static field, 
+                // we populate it the first time we get here,
+                // just before we would start loading new assemblies
+                if (assembliesLoadedAtStartup == null)
+                    assembliesLoadedAtStartup = AppDomain.CurrentDomain.GetAssemblies();
             }
 
             protected override Assembly Load(AssemblyName assemblyName)

@@ -19,11 +19,8 @@ namespace AssemblyLoader.Tests
         private readonly (string, string) ix310AssemblyVersion = ("System.Interactive, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263", "3.1.0.0");
         private readonly (string, string) ix311AssemblyVersion = ("System.Interactive, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263", "3.1.1.0");
 
-        private readonly Assembly[] assembliesAtStartup;
         public AssemblyLoaderTests()
         {
-            AssemblyLoader.MakeSnapshotOfLoadedAssemblies();
-
             // The AppContext.BaseDirectory will return the Test project's output directory
             // Something like <SolutionPath>\Tests\AssemblyLoader.Tests\bin\Debug\netcoreapp2.0
             var testsOutputDirectory = AppContext.BaseDirectory;
