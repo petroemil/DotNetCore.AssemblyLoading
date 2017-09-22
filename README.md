@@ -1,3 +1,4 @@
+
 Assembly loading in .NET Core is quite different compared to the .NET Framework. After a bit of research I realised that a lot of people have questions and confusions around this topic, so I made a sample solution to demonstrate how assemblies can be loaded properly in runtime.
 
 The very first thing that worth mentioning, is that .NET Core or Standard class libraries, by default, won't copy their dependencies to their output directory after build. To force this, an attribute have to be added to the class library's csproj file:
@@ -42,3 +43,6 @@ The problem with multiple assembly references is that even if they have same ver
 As you can see, it can be quite difficult to get assembly loading right.
 
 To help people with the same (or similar) issue, I put together a sample application that shows some of the techniques to deal with assembly loading in runtime.
+
+The implementation of the AssemblyLoader can be found in the [Source/AssemblyLoader/AssemblyLoader.cs](Source/AssemblyLoader/AssemblyLoader.cs) file, and you can see some examples for usage in the [Tests/AssemblyLoader.Tests/AssemblyLoaderTests.cs](Tests/AssemblyLoader.Tests/AssemblyLoaderTests.cs) file.
+Note that you have to run the tests one-by-one otherwise they will conflict with each other and they might fail.
